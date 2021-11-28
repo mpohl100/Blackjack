@@ -6,6 +6,11 @@
 
 namespace blackjack{
 
+void BlackjackHand::addCard(Card52 const& card)
+{
+    cards.push_back(card);
+}
+
 BlackjackHand BlackjackHand::fromString(std::string const& str)
 {
     auto cards =  str | ranges::views::split(' ')

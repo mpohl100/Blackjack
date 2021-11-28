@@ -2,6 +2,7 @@
 
 #include "Util.h"
 #include "Card52.h"
+#include "Deck52.h"
 
 namespace blackjack{
 

@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace game52{
+namespace blackjack{
 
 enum Rank52{
     Deuce,
@@ -46,6 +46,7 @@ class Card52{
         Suit suit() const;
         int nb() const;
         std::string toString() const;
+        int toBlackjackScore() const;
         friend constexpr auto operator<=>(Card52 const& l, Card52 const& r) = default;
     private:    
         Rank52 rank_;

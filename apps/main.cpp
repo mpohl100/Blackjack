@@ -1,4 +1,4 @@
-#include "Lib.h"
+
 #include <clara.hpp>
 
 #include <iostream>
@@ -22,8 +22,6 @@ int main(int argc, char** argv)
         std::cout << cli;
         exit(0);
     }
-
-    lib::say_hello(name);
     return 0;
 }
 

@@ -1,5 +1,5 @@
-set( LIB_SOURCES Lib.cpp)
+set( LIB_SOURCES Hand.cpp Card52.cpp Util.cpp)
 
-add_library( lib SHARED ${LIB_SOURCES} )
-target_link_libraries( lib CONAN_PKG::range-v3)
-target_include_directories(lib PUBLIC {CMAKE_SOURCE_DIR}/src)
+add_library( blackjack SHARED ${LIB_SOURCES} )
+target_link_libraries( blackjack CONAN_PKG::range-v3)
+target_include_directories(blackjack PUBLIC {CMAKE_SOURCE_DIR}/src)

@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include "Util.h"
+#include "UtilInternal.h"
 
 using namespace blackjack;
 

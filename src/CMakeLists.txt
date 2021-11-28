@@ -1,6 +1,6 @@
 add_subdirectory(evol)
 
-set( LIB_SOURCES Hand.cpp Card52.cpp Util.cpp BlackjackStrategy.cpp Deck52.cpp)
+set( LIB_SOURCES Hand.cpp Card52.cpp UtilInternal.cpp BlackjackStrategy.cpp Deck52.cpp)
 
 find_package(Threads)
 add_library( blackjack SHARED ${LIB_SOURCES} )

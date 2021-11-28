@@ -33,7 +33,7 @@ int main(int argc, char** argv)
     InfiniteDeck deck;
     BlackjackStrategy strat;
     evol::Rng rng;
-    double ret = playBlackjackHand(1, playerHand, dealerHand, deck, strat, rng);
+    double ret = playBlackjackHand(1, playerHand, dealerHand, deck, strat, rng, PlayMode::All);
     std::cout << ret << '\n';
     return 0;
 }

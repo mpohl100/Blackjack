@@ -1,4 +1,5 @@
 #include "Hand.h"
+#include "BlackjackHand.h"
 
 #include <range/v3/all.hpp>
 #include <ranges>
@@ -21,6 +22,13 @@ BlackjackHand BlackjackHand::fromString(std::string const& str)
     for(auto const& card : cards)
         hand.cards.push_back(Card52(card));
     return hand;
+}
+
+bool PlayerHand::isPair() const
+{
+    if(cards.size() != 2)
+        return false;
+    return cards[0].rank() == cards[1].rank();
 }
 
 }

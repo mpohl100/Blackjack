@@ -1,6 +1,5 @@
 
-
-#include "Util.h"
+#include "UtilInternal.h"
 #include "Card52.h"
 #include "Deck52.h"
 

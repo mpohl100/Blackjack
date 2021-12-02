@@ -24,7 +24,8 @@ template<class Deck>
 // returns the payout
 double playBlackjackHand(
     double playerBet, PlayerHand playerHand, DealerHand dealerHand, 
-    Deck const& deck, BlackjackStrategy const& playerStrategy, evol::Rng const& rng, PlayMode playMode)
+    Deck const& deck, BlackjackStrategy const& playerStrategy, 
+    evol::Rng const& rng, PlayMode playMode)
 {
     // as a first version we play without double down and without split
     // play dealer hand at the beginning so that recursive versions for splitting use the same dealer outcome
@@ -34,9 +35,9 @@ double playBlackjackHand(
     if(playMode == PlayMode::All and playerHand.isPair()) // splitting hands is allowed
     {
         Rank52 rank = playerHand.cards[0].rank();
-        auto it = playerStrategy.splitPercentages.find(rank);
+        auto it = playerStrategy.splitPercentages.find({rank, dealerHand.openCard()});
         if(it == playerStrategy.splitPercentages.end())
-            throw std::runtime_error("Split strategy not found for rank " + to_string(rank));
+            throw std::runtime_error("Split strategy not found for rank " + to_string(rank) + "/" + to_string(dealerHand.openCard()));
         bool doSplit = it->second.doIt(rng.fetchUniform(0, 100, 1).top());
         if(doSplit)
         {
@@ -54,25 +55,38 @@ double playBlackjackHand(
     }
 
     Points playerPoints = {};
+    bool onlyDrawOnce = false;
+    if(playMode == PlayMode::All or playMode == PlayMode::DoubleDown)
+    {
+        playerPoints = evaluateBlackjackHand(playerHand);
+        auto it = playerStrategy.doubleDownPercentages.find({playerPoints, dealerHand.openCard()});
+        if(it == playerStrategy.doubleDownPercentages.end())
+        {
+            throw std::runtime_error("Double down strategy not found " + playerPoints.toString() + "/" + to_string(dealerHand.openCard()));
+        }
+        int randomNumber = rng.fetchUniform(0, 100, 1).top(); 
+        onlyDrawOnce = it->second.doIt(randomNumber);   
+    }
     while(true)
     {
         playerPoints = evaluateBlackjackHand(playerHand);
-        auto it = playerStrategy.drawingPercentages.find(playerPoints);
+        auto it = playerStrategy.drawingPercentages.find({playerPoints, dealerHand.openCard()});
         if(it == playerStrategy.drawingPercentages.end())
-            throw std::runtime_error("Could not find playerPoints in BlackjackStrategy.drawingPercentages");
+            throw std::runtime_error("Drawing strategy not found " + playerPoints.toString() + "/" + to_string(dealerHand.openCard()));
         const Percentage& percentage = it->second;
-        int randomNumber = rng.fetchUniform(0, 100, 1).top(); 
-        if( not percentage.doIt(randomNumber))
-            break;
+        if(not onlyDrawOnce)
+        {
+            int randomNumber = rng.fetchUniform(0, 100, 1).top(); 
+            if( not percentage.doIt(randomNumber))
+                break;
+        }
         playerHand.addCard(deck.dealCard(rng));
+        if(onlyDrawOnce)
+            break;
     }
 
     // deduce player result
-    int playerResult = 0;
-    if(playerPoints.upper <= 21)
-        playerResult = playerPoints.upper;
-    else
-        playerResult = playerPoints.lower;
+    int playerResult = playerPoints.upper();
 
     // compare player and dealer hands
     if(playerResult > 21)

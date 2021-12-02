@@ -15,20 +15,30 @@ private:
     double perc_ = 0.5;
 };
 
+template<class T>
+struct BlackjackSituation{
+    T situation;
+    Rank52 dealerCard;
+    friend constexpr auto operator<=>(BlackjackSituation const& l, BlackjackSituation const& r) = default;
+};
+
+using HandSituation = BlackjackSituation<Points>;
+using SplitSituation = BlackjackSituation<Rank52>;
+
 struct BlackjackStrategy {
     // for the drawingPercentages first all cases for one ace ist contained must be solved for
     // 20 points and all dealer open cards
     // 19 points and all dealer open cards
     // ...
     // after all aces are solved we can then solve for all non ace hands
-    std::map<Points, Percentage> drawingPercentages;
+    std::map<HandSituation, Percentage> drawingPercentages;
 
     // we can solve the double down percentages independently of the drawing percentages
-    std::map<Points, Percentage> doubleDownPercentages;
+    std::map<HandSituation, Percentage> doubleDownPercentages;
 
     // the split percentages can be solved after the first two percentages 
     // as it can be played optimally from there on
-    std::map<Rank52, Percentage> splitPercentages;
+    std::map<SplitSituation, Percentage> splitPercentages;
 };
 
 }

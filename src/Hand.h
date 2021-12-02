@@ -23,15 +23,15 @@ struct DealerHand : public BlackjackHand{
         while(true)
         {
             Points points = evaluateBlackjackHand(*this);
-            if(points.upper >= drawUntil and points.upper <= 21)
+            if(points.upper() >= drawUntil and points.upper() <= 21)
             {
-                result = points.upper; 
+                result = points.upper(); 
                 break;
             }
 
-            if(points.lower >= drawUntil)
+            if(points.lower() >= drawUntil)
             {
-                result = points.lower;
+                result = points.lower();
                 break;
             }
             addCard(deck.dealCard(rng));
@@ -40,6 +40,7 @@ struct DealerHand : public BlackjackHand{
             return -1;
         return result;
     }
+    Rank52 openCard() const;
 };
 
 }

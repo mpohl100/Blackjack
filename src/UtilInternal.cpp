@@ -7,19 +7,20 @@ namespace blackjack{
 
 Points evaluateBlackjackHand( BlackjackHand const& hand)
 {
-    Points ret;
     bool encounteredAce = false;
+    int lower = 0;
+    int upper = 0;
     for(const Card52& card : hand.cards)
     {
-        ret.lower += card.toBlackjackScore();
-        ret.upper += card.toBlackjackScore();
+        lower += card.toBlackjackScore();
+        upper += card.toBlackjackScore();
         if(not encounteredAce and card.rank() == Rank52::Ace)
         {
-            ret.upper += 10;
+            upper += 10;
             encounteredAce = true;
         }
     }
-    return ret;
+    return {lower, upper};
 }
 
 }

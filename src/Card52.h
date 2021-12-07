@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace blackjack{
 
@@ -52,5 +53,7 @@ class Card52{
         Rank52 rank_;
         Suit suit_;
 };
+
+std::vector<Card52> toCards(std::string const& str);
 
 }

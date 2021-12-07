@@ -24,7 +24,7 @@ template<class Deck>
 // returns the payout
 double playBlackjackHand(
     double playerBet, PlayerHand playerHand, DealerHand dealerHand, 
-    Deck const& deck, BlackjackStrategy const& playerStrategy, 
+    Deck& deck, BlackjackStrategy const& playerStrategy, 
     evol::Rng const& rng, PlayMode playMode)
 {
     // as a first version we play without double down and without split

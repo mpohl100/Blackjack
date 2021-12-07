@@ -1,5 +1,7 @@
 #include "Card52.h" 
 
+#include <range/v3/all.hpp>
+#include <ranges>
 #include <stdexcept>
 #include <string>
 
@@ -131,6 +133,19 @@ int Card52::toBlackjackScore() const
         break;
     }
     return -1;
+}
+
+
+std::vector<Card52> toCards(std::string const& str)
+{
+    auto cardsStr =  str | ranges::views::split(' ')
+                         | ranges::views::transform([](auto &&rng) {
+        return std::string(&*rng.begin(), std::ranges::distance(rng));
+    });
+    std::vector<Card52> ret;
+    for(auto const& card : cardsStr)
+        ret.push_back(Card52(card));
+    return ret; 
 }
 
 }

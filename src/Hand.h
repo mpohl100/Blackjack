@@ -16,7 +16,7 @@ struct PlayerHand : public BlackjackHand{
 
 struct DealerHand : public BlackjackHand{
     template<class Deck>
-    int play(Deck const& deck, evol::Rng const& rng)
+    int play(Deck& deck, evol::Rng const& rng)
     {
         int drawUntil = 17;
         int result = 0;

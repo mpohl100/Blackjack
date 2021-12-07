@@ -1,10 +1,24 @@
 #include <catch2/catch.hpp>
 
 #include "UtilInternal.h"
+#include "Deck52.h"
+#include "Hand.h"
 
 using namespace blackjack;
 
+std::pair<DealerHand, int> dealDealerHand(std::string const& str)
+{
+    evol::Rng rng;
+    DeterministicDeck deck(toCards(str));
+    auto cards = deck.deal(2, rng);
+    DealerHand dealerHand{cards};
+    int result = dealerHand.play(deck, rng);
+    return {dealerHand, result};
+}
+
 namespace {
+
+
 
 TEST_CASE("Blackjack", "[blackjack]"){
     SECTION("Points Deduction One Card"){
@@ -88,6 +102,35 @@ TEST_CASE("Blackjack", "[blackjack]"){
         hand = BlackjackHand::fromString("As Kh");
         points = evaluateBlackjackHand(hand);
         CHECK(points == Points{11, 21});
+    }
+    SECTION("Deal Dealer Hand"){
+
+        auto checkDealerHand = [&](std::string const& str, int expectedResult)
+        {
+            auto result = dealDealerHand(str);
+            CHECK(result.first.cards == toCards(str));
+            CHECK(result.second == expectedResult);
+        };
+        // straight forward results
+        checkDealerHand("As Qs", 21);
+        checkDealerHand("Ks Qs", 20);
+        checkDealerHand("Ks 9s", 19);   
+        checkDealerHand("Ks 8s", 18); 
+        checkDealerHand("Ks 7s", 17);
+        // three cards stay at 17
+        checkDealerHand("Ks 6h Ad", 17);
+        checkDealerHand("Ks 6h 2d", 18);
+        checkDealerHand("Ks 6h 3d", 19);
+        checkDealerHand("Ks 6h 4d", 20);
+        checkDealerHand("Ks 6h 5d", 21);
+        checkDealerHand("Ks 6h 6d", -1);
+        // draw until 17 with ace
+        checkDealerHand("Ad 5h As", 17);
+        checkDealerHand("Ad 5h 2s", 18);
+        checkDealerHand("Ad 5h 3s", 19);
+        checkDealerHand("Ad 5h 4s", 20);
+        checkDealerHand("Ad 5h 5s", 21);
+        checkDealerHand("Ad 5h 6s Kd", -1);
     }
 }
 

@@ -4,6 +4,7 @@
 #include <range/v3/all.hpp>
 #include <ranges>
 #include <string>
+#include <stdexcept>
 
 namespace blackjack{
 
@@ -14,14 +15,17 @@ void BlackjackHand::addCard(Card52 const& card)
 
 BlackjackHand BlackjackHand::fromString(std::string const& str)
 {
-    auto cards =  str | ranges::views::split(' ')
-                      | ranges::views::transform([](auto &&rng) {
-        return std::string(&*rng.begin(), std::ranges::distance(rng));
-    });
+    auto cards = toCards(str);
     BlackjackHand hand;
-    for(auto const& card : cards)
-        hand.cards.push_back(Card52(card));
+    hand.cards = cards;
     return hand;
+}
+
+BlackjackHand::BlackjackHand(std::vector<Card52> const& cards)
+: cards(cards)
+{
+    if(cards.size() != 2)
+        throw std::runtime_error("Blackjack hand constructed without two cards.");
 }
 
 bool PlayerHand::isPair() const

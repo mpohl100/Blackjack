@@ -44,6 +44,46 @@ std::string to_string(Suit suit)
     return "Unknown";
 }
 
+BlackjackRank::BlackjackRank(Rank52 rank)
+{
+    switch(rank){
+        case Deuce: val = 2;
+        case Three: val = 3;
+        case Four: val = 4;
+        case Five: val = 5;
+        case Six: val = 6;
+        case Seven: val = 7;
+        case Eight: val = 8;
+        case Nine: val = 9;
+        case Ten: val = 10;
+        case Jack: val = 10;
+        case Queen: val = 10;
+        case King: val = 10;
+        case Ace: val = 11;    
+    default:
+        break;
+    }
+}
+
+std::vector<BlackjackRank> BlackjackRank::createAll()
+{
+    return {BlackjackRank(Deuce),
+    BlackjackRank(Three),
+    BlackjackRank(Four),
+    BlackjackRank(Five),
+    BlackjackRank(Six),
+    BlackjackRank(Seven),
+    BlackjackRank(Eight),
+    BlackjackRank(Nine),
+    BlackjackRank(Ten),
+    BlackjackRank(Ace),};
+}
+
+std::string BlackjackRank::toString() const
+{
+    return std::to_string(val);
+}
+
 Rank52 getRank(char c)
 {
     switch(c){

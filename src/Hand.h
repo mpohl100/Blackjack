@@ -40,7 +40,7 @@ struct DealerHand : public BlackjackHand{
             return -1;
         return result;
     }
-    Rank52 openCard() const;
+    BlackjackRank openCard() const;
 };
 
 }

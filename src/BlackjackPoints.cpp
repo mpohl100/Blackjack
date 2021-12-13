@@ -1,5 +1,7 @@
 #include "BlackjackPoints.h"
 
+#include <set>
+
 namespace blackjack{
 
 Points::Points(int lower, int upper)
@@ -21,6 +23,17 @@ int Points::upper() const
 std::string Points::toString() const
 {
     return std::to_string(lower_) + "/" + std::to_string(upper_);
+}
+
+std::vector<Points> Points::createAll()
+{
+    std::set<Points> points;
+    for(int i = 4; i <= 21; ++i)
+    {
+        points.insert({i, i});
+        points.insert({i, i+10});
+    }
+    return {points.begin(), points.end()};
 }
 
 }

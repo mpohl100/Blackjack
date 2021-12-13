@@ -8,6 +8,12 @@ namespace blackjack{
 
 class Percentage{
 public:
+    Percentage(int val);
+    Percentage() = default;
+    Percentage(Percentage const&) = default;
+    Percentage& operator=(Percentage const&) = default;
+    Percentage(Percentage&&) = default;
+    Percentage& operator=(Percentage&&) = default;
     void crossover(Percentage const& other);
     void mutate();
     bool doIt(int threshold) const;
@@ -18,12 +24,22 @@ private:
 template<class T>
 struct BlackjackSituation{
     T situation;
-    Rank52 dealerCard;
+    BlackjackRank dealerCard;
     friend constexpr auto operator<=>(BlackjackSituation const& l, BlackjackSituation const& r) = default;
+    static std::vector<BlackjackSituation> createAll()
+    {
+        auto allSits = T::createAll();
+        auto dealerCards = BlackjackRank::createAll();
+        std::vector<BlackjackSituation> ret;
+        for(const auto& sit : allSits)
+            for(const auto& dealerCard : dealerCards)
+                ret.push_back({sit, dealerCard});
+        return ret;
+    }
 };
 
 using HandSituation = BlackjackSituation<Points>;
-using SplitSituation = BlackjackSituation<Rank52>;
+using SplitSituation = BlackjackSituation<BlackjackRank>;
 
 struct BlackjackStrategy {
     // for the drawingPercentages first all cases for one ace ist contained must be solved for
@@ -39,6 +55,8 @@ struct BlackjackStrategy {
     // the split percentages can be solved after the first two percentages 
     // as it can be played optimally from there on
     std::map<SplitSituation, Percentage> splitPercentages;
+
+    static BlackjackStrategy createTest(Percentage const& draw, Percentage const& doubleDown, Percentage const& split);
 };
 
 }

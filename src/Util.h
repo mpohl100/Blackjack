@@ -34,10 +34,10 @@ double playBlackjackHand(
     // add code for splitting here
     if(playMode == PlayMode::All and playerHand.isPair()) // splitting hands is allowed
     {
-        Rank52 rank = playerHand.cards[0].rank();
+        BlackjackRank rank = BlackjackRank(playerHand.cards[0].rank());
         auto it = playerStrategy.splitPercentages.find({rank, dealerHand.openCard()});
         if(it == playerStrategy.splitPercentages.end())
-            throw std::runtime_error("Split strategy not found for rank " + to_string(rank) + "/" + to_string(dealerHand.openCard()));
+            throw std::runtime_error("Split strategy not found for rank " + rank.toString() + "/" + dealerHand.openCard().toString());
         bool doSplit = it->second.doIt(rng.fetchUniform(0, 100, 1).top());
         if(doSplit)
         {
@@ -62,27 +62,29 @@ double playBlackjackHand(
         auto it = playerStrategy.doubleDownPercentages.find({playerPoints, dealerHand.openCard()});
         if(it == playerStrategy.doubleDownPercentages.end())
         {
-            throw std::runtime_error("Double down strategy not found " + playerPoints.toString() + "/" + to_string(dealerHand.openCard()));
+            throw std::runtime_error("Double down strategy not found " + playerPoints.toString() + "/" + dealerHand.openCard().toString());
         }
         int randomNumber = rng.fetchUniform(0, 100, 1).top(); 
         onlyDrawOnce = it->second.doIt(randomNumber);   
     }
     while(true)
     {
+        if(onlyDrawOnce)
+        {
+            playerHand.addCard(deck.dealCard(rng));
+            break;
+        }
         playerPoints = evaluateBlackjackHand(playerHand);
+        if(playerPoints.lower() > 21)
+            break;
         auto it = playerStrategy.drawingPercentages.find({playerPoints, dealerHand.openCard()});
         if(it == playerStrategy.drawingPercentages.end())
-            throw std::runtime_error("Drawing strategy not found " + playerPoints.toString() + "/" + to_string(dealerHand.openCard()));
+            throw std::runtime_error("Drawing strategy not found " + playerPoints.toString() + "/" + dealerHand.openCard().toString());
         const Percentage& percentage = it->second;
-        if(not onlyDrawOnce)
-        {
-            int randomNumber = rng.fetchUniform(0, 100, 1).top(); 
-            if( not percentage.doIt(randomNumber))
-                break;
-        }
-        playerHand.addCard(deck.dealCard(rng));
-        if(onlyDrawOnce)
+        int randomNumber = rng.fetchUniform(0, 100, 1).top(); 
+        if( not percentage.doIt(randomNumber))
             break;
+        playerHand.addCard(deck.dealCard(rng));
     }
 
     // deduce player result

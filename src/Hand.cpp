@@ -35,9 +35,9 @@ bool PlayerHand::isPair() const
     return cards[0].rank() == cards[1].rank();
 }
 
-Rank52 DealerHand::openCard() const
+BlackjackRank DealerHand::openCard() const
 {
-    return cards[0].rank();
+    return BlackjackRank(cards[0].rank());
 }
 
 }

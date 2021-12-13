@@ -32,6 +32,19 @@ enum Suit{
 
 std::string to_string(Suit suit);
 
+struct BlackjackRank{
+    explicit BlackjackRank(Rank52);
+    BlackjackRank() = default;
+    BlackjackRank(BlackjackRank const&) = default;
+    BlackjackRank& operator=(BlackjackRank const&) = default;
+    BlackjackRank(BlackjackRank&&) = default;
+    BlackjackRank& operator=(BlackjackRank&&) = default;
+    int val = -1;
+    static std::vector<BlackjackRank> createAll();
+    friend constexpr auto operator<=>(BlackjackRank const& l, BlackjackRank const& r) = default;
+    std::string toString() const;
+};
+
 class Card52{
     public: 
         Card52(Rank52 rank, Suit suit);

@@ -2,6 +2,7 @@
 
 #include <compare>
 #include <string>
+#include <vector>
 
 namespace blackjack{
 
@@ -16,6 +17,7 @@ struct Points{
     int upper() const;
     friend constexpr auto operator<=>(Points const& l, Points const& r) = default;
     std::string toString() const;
+    static std::vector<Points> createAll();
 private:
     int lower_ = -10000;
     int upper_ = -10000;

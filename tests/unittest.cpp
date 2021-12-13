@@ -3,6 +3,7 @@
 #include "UtilInternal.h"
 #include "Deck52.h"
 #include "Hand.h"
+#include "Util.h"
 
 using namespace blackjack;
 
@@ -14,6 +15,18 @@ std::pair<DealerHand, int> dealDealerHand(std::string const& str)
     DealerHand dealerHand{cards};
     int result = dealerHand.play(deck, rng);
     return {dealerHand, result};
+}
+
+double playHand(std::string const& str, PlayMode playMode)
+{
+    evol::Rng rng;
+    DeterministicDeck deck(toCards(str));
+    auto cards = deck.deal(2, rng);
+    DealerHand dealerHand{cards};    
+    cards = deck.deal(2, rng);
+    PlayerHand playerHand{cards};
+    BlackjackStrategy strat = BlackjackStrategy::createTest(Percentage(100), Percentage(0), Percentage(0));
+    return playBlackjackHand(1, playerHand, dealerHand, deck, strat, rng, playMode);
 }
 
 namespace {

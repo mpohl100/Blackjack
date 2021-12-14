@@ -188,4 +188,23 @@ std::vector<Card52> toCards(std::string const& str)
     return ret; 
 }
 
+Card52 BlackjackRank::getRepresentativeCard() const
+{
+    Suit suit = Hearts;
+    switch(val){
+        case 2: return Card52(Deuce, suit);
+        case 3: return Card52(Three, suit);
+        case 4: return Card52(Four, suit);
+        case 5: return Card52(Five, suit);
+        case 6: return Card52(Six, suit);
+        case 7: return Card52(Seven, suit);
+        case 8: return Card52(Eight, suit);
+        case 9: return Card52(Nine, suit);
+        case 10: return Card52(Ten, suit);
+        case 11: return Card52(Ace, suit);
+        default: throw std::runtime_error("Unexpected BlackjackRank: " + std::to_string(val));
+    };
+    return {};
+}
+
 }

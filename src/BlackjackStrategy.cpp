@@ -1,5 +1,7 @@
 #include "BlackjackStrategy.h"
 
+#include "evol/Rng.h"
+
 namespace blackjack{
 
 Percentage::Percentage(int val)
@@ -14,13 +16,24 @@ void Percentage::crossover(Percentage const& other)
 
 void Percentage::mutate()
 {
-    // todo implement
+    static thread_local evol::Rng rng;
+    int randomStep = rng.fetchUniform(-2, 2, 1).top();
+    perc_ += randomStep / 100.0;
+    if(perc_ < 0)
+        perc_ = 0;
+    if(perc_ > 1)
+        perc_ = 1;
+}
+
+std::string Percentage::toString() const
+{
+    return std::to_string(perc_*100) + "%";
 }
 
 bool Percentage::doIt(int threshold) const
 {
     int percentage = int(perc_*100);
-    return percentage >= threshold;
+    return percentage <= threshold;
 }
 
 BlackjackStrategy BlackjackStrategy::createTest(Percentage const& draw, Percentage const& doubleDown, Percentage const& split)

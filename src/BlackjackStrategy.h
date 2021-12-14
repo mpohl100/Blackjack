@@ -16,6 +16,7 @@ public:
     Percentage& operator=(Percentage&&) = default;
     void crossover(Percentage const& other);
     void mutate();
+    std::string toString() const;
     bool doIt(int threshold) const;
 private:
     double perc_ = 0.5;

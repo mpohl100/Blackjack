@@ -1,6 +1,5 @@
 
-#include "Util.h"
-#include "Deck52.h"
+#include "BlackjackAnalysis.h"
 
 #include <clara.hpp>
 
@@ -28,13 +27,7 @@ int main(int argc, char** argv)
         exit(0);
     }
 
-    PlayerHand playerHand;
-    DealerHand dealerHand;
-    InfiniteDeck deck;
-    BlackjackStrategy strat;
-    evol::Rng rng;
-    double ret = playBlackjackHand(1, playerHand, dealerHand, deck, strat, rng, PlayMode::All);
-    std::cout << ret << '\n';
+    BlackjackStrategy strat = optimizeBlackjack();
     return 0;
 }
 

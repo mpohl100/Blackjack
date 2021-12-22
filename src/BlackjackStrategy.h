@@ -24,8 +24,20 @@ private:
 
 template<class T>
 struct BlackjackSituation{
-    T situation;
     BlackjackRank dealerCard;
+    T situation;
+    
+    BlackjackSituation(T const& sit, BlackjackRank dealerCard)
+    : dealerCard(dealerCard)
+    , situation(sit)
+    {}
+
+    BlackjackSituation() = default;
+    BlackjackSituation(BlackjackSituation const&) = default;
+    BlackjackSituation& operator=(BlackjackSituation const&) = default;
+    BlackjackSituation(BlackjackSituation&&) = default;
+    BlackjackSituation& operator=(BlackjackSituation&&) = default;
+
     friend constexpr auto operator<=>(BlackjackSituation const& l, BlackjackSituation const& r) = default;
     static std::vector<BlackjackSituation> createAll()
     {

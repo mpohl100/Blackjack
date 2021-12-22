@@ -50,6 +50,7 @@ PlayerHand getPlayerHand(BlackjackChallenge::Type type, BlackjackGameSituation c
                     case 9: ret.addCard(Card52(Nine, Spades)); break;
                     default: throw std::runtime_error("Unexpected goal points in generation of player hand: " + std::to_string(goalPoints));
                 }
+                break;
             }
         }
     }
@@ -63,16 +64,73 @@ Percentage optimizeSitutation(BlackjackGameSituation const& situation)
         ? BlackjackChallenge::Type::Split : situation.isDraw 
         ? BlackjackChallenge::Type::Draw : BlackjackChallenge::Type::DoubleDown;
     BlackjackChallenge challenge(type, getDealerRank(type, situation), getPlayerHand(type, situation), situation.strat );
-    std::vector<Percentage> initialPopulation;
-    for(size_t i = 0; i < 20; ++i)
-        initialPopulation.push_back(Percentage(50));
-    evol::EvolutionOptions evolOpts;
-    evolOpts.num_generations = situation.nbGenerations;
-    evolOpts.log_level = situation.logLevel;
-    evolOpts.out = &std::cout;
-    double result = 0;
-    auto winning = evol::evolution(initialPopulation, challenge, result, evolOpts);
-    return winning.front();
+    // use absolute answers as a first test wether the expected results are met
+    Percentage dont = Percentage(0);
+    Percentage doIt = Percentage(100);
+    double scoreDont = challenge.score(dont);
+    double scoreDoIt = challenge.score(doIt);
+    return scoreDoIt > scoreDont ? doIt : dont;
+}
+
+BlackjackStrategy optimizeBlackjack()
+{
+    BlackjackStrategy result;
+    // first optimize drawing
+    for(size_t i = 21; i >= 2; i--)
+    {
+        for(BlackjackRank dealerRank : BlackjackRank::createAll())
+        {
+            BlackjackGameSituation situation;
+            situation.isDraw = true;
+            situation.strat = result; // all dependent game situations should be in the map
+            HandSituation handSituation;
+            handSituation.situation = Points(i, i);
+            handSituation.dealerCard = dealerRank;
+            situation.handSituation = std::make_optional<HandSituation>(handSituation);
+            result.drawingPercentages[handSituation] = optimizeSitutation(situation);
+            HandSituation handSituationUpper;
+            handSituationUpper.situation = Points(i, i+10);
+            handSituationUpper.dealerCard = dealerRank;
+            situation.handSituation = std::make_optional<HandSituation>(handSituationUpper);
+            result.drawingPercentages[handSituation] = optimizeSitutation(situation);
+        }
+    }
+    // then optimize double down
+    for(size_t i = 21; i >= 2; i--)
+    {
+        for(BlackjackRank dealerRank : BlackjackRank::createAll())
+        {
+            BlackjackGameSituation situation;
+            situation.isDraw = false;
+            situation.strat = result; // all dependent game situations should be in the map
+            HandSituation handSituation;
+            handSituation.situation = Points(i, i);
+            handSituation.dealerCard = dealerRank;
+            situation.handSituation = std::make_optional<HandSituation>(handSituation);
+            result.doubleDownPercentages[handSituation] = optimizeSitutation(situation);
+            HandSituation handSituationUpper;
+            handSituationUpper.situation = Points(i, i+10);
+            handSituationUpper.dealerCard = dealerRank;
+            situation.handSituation = std::make_optional<HandSituation>(handSituationUpper);
+            result.doubleDownPercentages[handSituation] = optimizeSitutation(situation);
+        }
+    }
+    // then optimize split
+    for(BlackjackRank splitRank : BlackjackRank::createAll())
+    {
+        for(BlackjackRank dealerRank : BlackjackRank::createAll())
+        {
+            BlackjackGameSituation situation;
+            situation.isDraw = false;
+            situation.strat = result; // all dependent game situations should be in the map
+            SplitSituation splitSituation;
+            splitSituation.situation = splitRank;
+            splitSituation.dealerCard = dealerRank;
+            situation.splitSituation = std::make_optional<SplitSituation>(splitSituation);
+            result.splitPercentages[splitSituation] = optimizeSitutation(situation);
+        }
+    }
+    return result;
 }
 
 }

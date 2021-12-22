@@ -33,7 +33,7 @@ std::string Percentage::toString() const
 bool Percentage::doIt(int threshold) const
 {
     int percentage = int(perc_*100);
-    return percentage <= threshold;
+    return percentage >= threshold;
 }
 
 BlackjackStrategy BlackjackStrategy::createTest(Percentage const& draw, Percentage const& doubleDown, Percentage const& split)

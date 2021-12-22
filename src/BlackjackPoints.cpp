@@ -8,8 +8,8 @@ Points::Points(int lower, int upper)
 : lower_(lower)
 , upper_(upper)
 {
-    if(upper > 21)
-        upper = lower;
+    if(upper_ > 21)
+        upper_ = lower_;
 }
 int Points::lower() const
 {

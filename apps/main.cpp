@@ -28,6 +28,7 @@ int main(int argc, char** argv)
     }
 
     BlackjackStrategy strat = optimizeBlackjack();
+    std::cout << strat.toStringMat() << '\n'; 
     return 0;
 }
 

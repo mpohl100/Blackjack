@@ -37,7 +37,7 @@ double playBlackjackHand(
         BlackjackRank rank = BlackjackRank(playerHand.cards[0].rank());
         auto it = playerStrategy.splitPercentages.find({rank, dealerHand.openCard()});
         if(it == playerStrategy.splitPercentages.end())
-            throw std::runtime_error("Split strategy not found for rank " + rank.toString() + "/" + dealerHand.openCard().toString());
+            throw std::runtime_error("Split strategy not found for rank " + rank.toString() + " ; " + dealerHand.openCard().toString());
         bool doSplit = it->second.doIt(rng.fetchUniform(0, 100, 1).top());
         if(doSplit)
         {
@@ -62,7 +62,7 @@ double playBlackjackHand(
         auto it = playerStrategy.doubleDownPercentages.find({playerPoints, dealerHand.openCard()});
         if(it == playerStrategy.doubleDownPercentages.end())
         {
-            throw std::runtime_error("Double down strategy not found " + playerPoints.toString() + "/" + dealerHand.openCard().toString());
+            throw std::runtime_error("Double down strategy not found " + playerPoints.toString() + " ; " + dealerHand.openCard().toString());
         }
         int randomNumber = rng.fetchUniform(0, 100, 1).top(); 
         onlyDrawOnce = it->second.doIt(randomNumber);   
@@ -79,7 +79,7 @@ double playBlackjackHand(
             break;
         auto it = playerStrategy.drawingPercentages.find({playerPoints, dealerHand.openCard()});
         if(it == playerStrategy.drawingPercentages.end())
-            throw std::runtime_error("Drawing strategy not found " + playerPoints.toString() + "/" + dealerHand.openCard().toString());
+            throw std::runtime_error("Drawing strategy not found " + playerPoints.toString() + " ; " + dealerHand.openCard().toString());
         const Percentage& percentage = it->second;
         int randomNumber = rng.fetchUniform(0, 100, 1).top(); 
         if( not percentage.doIt(randomNumber))

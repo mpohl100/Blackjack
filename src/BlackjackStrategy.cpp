@@ -2,6 +2,8 @@
 
 #include "evol/Rng.h"
 
+#include <iostream>
+
 namespace blackjack{
 
 Percentage::Percentage(int val)
@@ -35,6 +37,101 @@ bool Percentage::doIt(int threshold) const
     int percentage = int(perc_*100);
     return percentage >= threshold;
 }
+
+std::string BlackjackStrategy::toString() const
+{
+    std::string ret;
+    ret += "Drawing Strategy:\n";
+    for(const auto& [situation, percentage] : drawingPercentages)
+    {
+        const auto& [points, dealerRank] = situation;
+        ret += points.toString() + ";";
+        ret += dealerRank.toString() + ";";
+        ret += percentage.toString() + ";";
+        ret += "\n";
+    }
+    ret += "\n\n\n";
+    ret += "Double Down Strategy:\n";
+    for(const auto& [situation, percentage] : doubleDownPercentages)
+    {
+        const auto& [points, dealerRank] = situation;
+        ret += points.toString() + ";";
+        ret += dealerRank.toString() + ";";
+        ret += percentage.toString() + ";";
+        ret += "\n";
+    }
+    ret += "\n\n\n";
+    ret += "Split Strategy:\n";
+    for(const auto& [situation, percentage] : splitPercentages)
+    {
+        const auto& [playerRank, dealerRank] = situation;
+        ret += playerRank.toString() + ";";
+        ret += dealerRank.toString() + ";";
+        ret += percentage.toString() + ";";
+        ret += "\n";
+    }
+    return ret;
+}
+
+std::string BlackjackStrategy::toStringMat() const
+{
+    std::string ret;
+    // drawing mat
+    ret += "Drawing Strategy:\n";
+    Points firstPoints;
+    ret += ";";
+    for(const auto& rank : BlackjackRank::createAll())
+        ret += rank.toString() + ";";
+    ret += "\n";
+    for(const auto& [situation, percentage] : drawingPercentages)
+    {
+        const auto& [points, dealerRank] = situation;
+        if(points != firstPoints)
+        {
+            ret += "\n" + points.toString() + ';';
+            firstPoints = points;
+        }
+        ret += percentage.toString() + ";";
+    }
+
+    // double down mat
+    ret += "\nDouble Down Strategy:\n";
+    firstPoints = {};
+    ret += ";";
+    for(const auto& rank : BlackjackRank::createAll())
+        ret += rank.toString() + ";";
+    ret += "\n";
+    for(const auto& [situation, percentage] : doubleDownPercentages)
+    {
+        const auto& [points, dealerRank] = situation;
+        if(points != firstPoints)
+        {
+            ret += "\n" + points.toString() + ';';
+            firstPoints = points;
+        }
+        ret += percentage.toString() + ";";
+    }
+
+    // split mat
+    ret += "\nSplitting Strategy:\n";
+    BlackjackRank firstRank = {};
+    ret += ";";
+    for(const auto& rank : BlackjackRank::createAll())
+        ret += rank.toString() + ";";
+    ret += "\n";
+    for(const auto& [situation, percentage] : splitPercentages)
+    {
+        const auto& [handRank, dealerRank] = situation;
+        if(handRank != firstRank)
+        {
+            ret += "\n" + handRank.toString() + ';';
+            firstRank = handRank;
+        }
+        ret += percentage.toString() + ";";
+    }
+    return ret;
+}
+
 
 BlackjackStrategy BlackjackStrategy::createTest(Percentage const& draw, Percentage const& doubleDown, Percentage const& split)
 {

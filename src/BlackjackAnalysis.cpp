@@ -4,6 +4,7 @@
 #include "evol/Evolution.h"
 
 #include <stdexcept>
+#include <iostream>
 
 namespace blackjack{
 
@@ -78,7 +79,8 @@ BlackjackStrategy optimizeBlackjack()
     // first optimize drawing
     for(size_t i = 21; i >= 2; i--)
     {
-        for(BlackjackRank dealerRank : BlackjackRank::createAll())
+        auto blackjackRanks = BlackjackRank::createAll();
+        for(BlackjackRank dealerRank : blackjackRanks)
         {
             BlackjackGameSituation situation;
             situation.isDraw = true;
@@ -92,13 +94,14 @@ BlackjackStrategy optimizeBlackjack()
             handSituationUpper.situation = Points(i, i+10);
             handSituationUpper.dealerCard = dealerRank;
             situation.handSituation = std::make_optional<HandSituation>(handSituationUpper);
-            result.drawingPercentages[handSituation] = optimizeSitutation(situation);
+            result.drawingPercentages[handSituationUpper] = optimizeSitutation(situation);
         }
     }
     // then optimize double down
     for(size_t i = 21; i >= 2; i--)
     {
-        for(BlackjackRank dealerRank : BlackjackRank::createAll())
+        auto blackjackRanks = BlackjackRank::createAll();
+        for(BlackjackRank dealerRank : blackjackRanks)
         {
             BlackjackGameSituation situation;
             situation.isDraw = false;
@@ -112,13 +115,14 @@ BlackjackStrategy optimizeBlackjack()
             handSituationUpper.situation = Points(i, i+10);
             handSituationUpper.dealerCard = dealerRank;
             situation.handSituation = std::make_optional<HandSituation>(handSituationUpper);
-            result.doubleDownPercentages[handSituation] = optimizeSitutation(situation);
+            result.doubleDownPercentages[handSituationUpper] = optimizeSitutation(situation);
         }
     }
     // then optimize split
-    for(BlackjackRank splitRank : BlackjackRank::createAll())
+    auto blackjackRanks = BlackjackRank::createAll();
+    for(BlackjackRank splitRank : blackjackRanks)
     {
-        for(BlackjackRank dealerRank : BlackjackRank::createAll())
+        for(BlackjackRank dealerRank : blackjackRanks)
         {
             BlackjackGameSituation situation;
             situation.isDraw = false;

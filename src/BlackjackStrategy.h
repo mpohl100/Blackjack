@@ -24,12 +24,12 @@ private:
 
 template<class T>
 struct BlackjackSituation{
-    BlackjackRank dealerCard;
     T situation;
+    BlackjackRank dealerCard;
     
     BlackjackSituation(T const& sit, BlackjackRank dealerCard)
-    : dealerCard(dealerCard)
-    , situation(sit)
+    : situation(sit)
+    , dealerCard(dealerCard)
     {}
 
     BlackjackSituation() = default;
@@ -69,6 +69,8 @@ struct BlackjackStrategy {
     // as it can be played optimally from there on
     std::map<SplitSituation, Percentage> splitPercentages;
 
+    std::string toString() const;
+    std::string toStringMat() const;
     static BlackjackStrategy createTest(Percentage const& draw, Percentage const& doubleDown, Percentage const& split);
 };
 

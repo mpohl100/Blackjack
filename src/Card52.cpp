@@ -47,19 +47,19 @@ std::string to_string(Suit suit)
 BlackjackRank::BlackjackRank(Rank52 rank)
 {
     switch(rank){
-        case Deuce: val = 2;
-        case Three: val = 3;
-        case Four: val = 4;
-        case Five: val = 5;
-        case Six: val = 6;
-        case Seven: val = 7;
-        case Eight: val = 8;
-        case Nine: val = 9;
-        case Ten: val = 10;
-        case Jack: val = 10;
-        case Queen: val = 10;
-        case King: val = 10;
-        case Ace: val = 11;    
+        case Deuce: val = 2; break;
+        case Three: val = 3; break;
+        case Four: val = 4; break;
+        case Five: val = 5; break;
+        case Six: val = 6; break;
+        case Seven: val = 7; break;
+        case Eight: val = 8; break;
+        case Nine: val = 9; break;
+        case Ten: val = 10; break;
+        case Jack: val = 10; break;
+        case Queen: val = 10; break;
+        case King: val = 10; break;
+        case Ace: val = 11; break;
     default:
         break;
     }

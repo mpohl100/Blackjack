@@ -35,8 +35,8 @@ PlayerHand getPlayerHand(BlackjackChallenge::Type type, BlackjackGameSituation c
         {
             if(goalPoints >= 10)
             {
-                ret.addCard(Card52(King, Hearts));
-                goalPoints -= 10;
+                ret.addCard(Card52(Eight, Hearts));
+                goalPoints -= 8;
             }
             else{
                 switch(goalPoints){
@@ -54,6 +54,9 @@ PlayerHand getPlayerHand(BlackjackChallenge::Type type, BlackjackGameSituation c
                 break;
             }
         }
+        Points toCheck = evaluateBlackjackHand(ret);
+        if(toCheck != situation.handSituation->situation)
+            throw std::runtime_error("incorrect player hand formed.");
     }
     return ret;
 }

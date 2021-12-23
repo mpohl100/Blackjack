@@ -66,12 +66,15 @@ double playBlackjackHand(
         }
         int randomNumber = rng.fetchUniform(0, 100, 1).top(); 
         onlyDrawOnce = it->second.doIt(randomNumber);   
+        if(onlyDrawOnce)
+            playerBet *= 2.0;
     }
     while(true)
     {
         if(onlyDrawOnce)
         {
             playerHand.addCard(deck.dealCard(rng));
+            playerPoints = evaluateBlackjackHand(playerHand);
             break;
         }
         playerPoints = evaluateBlackjackHand(playerHand);
@@ -99,6 +102,8 @@ double playBlackjackHand(
         return playerBet;
     if(playerResult > dealerResult)
         return playerBet;
+    if(playerResult == dealerResult)
+        return 0;
     return -playerBet;
 }
 

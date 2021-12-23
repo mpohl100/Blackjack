@@ -82,7 +82,6 @@ std::string BlackjackStrategy::toStringMat() const
     ret += ";";
     for(const auto& rank : BlackjackRank::createAll())
         ret += rank.toString() + ";";
-    ret += "\n";
     for(const auto& [situation, percentage] : drawingPercentages)
     {
         const auto& [points, dealerRank] = situation;
@@ -100,7 +99,6 @@ std::string BlackjackStrategy::toStringMat() const
     ret += ";";
     for(const auto& rank : BlackjackRank::createAll())
         ret += rank.toString() + ";";
-    ret += "\n";
     for(const auto& [situation, percentage] : doubleDownPercentages)
     {
         const auto& [points, dealerRank] = situation;
@@ -118,7 +116,6 @@ std::string BlackjackStrategy::toStringMat() const
     ret += ";";
     for(const auto& rank : BlackjackRank::createAll())
         ret += rank.toString() + ";";
-    ret += "\n";
     for(const auto& [situation, percentage] : splitPercentages)
     {
         const auto& [handRank, dealerRank] = situation;

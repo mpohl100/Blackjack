@@ -129,6 +129,73 @@ std::string BlackjackStrategy::toStringMat() const
     return ret;
 }
 
+std::string BlackjackStrategy::toStringMat2() const
+{
+    std::map<HandSituation, std::string> hardStrat;
+    std::map<HandSituation, std::string> softStrat;
+    for(const auto& [situation, percentage] : doubleDownPercentages)
+    {
+        const auto& [points, dealerRank] = situation;
+        std::map<HandSituation, std::string>& target = points.upper() == points.lower() ? hardStrat : softStrat;
+        if(percentage == Percentage(100))
+            target[situation] = "D";
+        else if(drawingPercentages.at(situation) == Percentage(100))
+            target[situation] = "H";
+        else
+            target[situation] = "S";
+    }
+
+    std::string ret = "Hard hands strategy:\n";
+    Points firstPoints;
+    ret += ";";
+    for(const auto& rank : BlackjackRank::createAll())
+        ret += rank.toString() + ";";
+    for(const auto& [situation, action] : hardStrat)
+    {
+        const auto& [points, dealerRank] = situation;
+        if(points != firstPoints)
+        {
+            ret += "\n" + points.toString() + ';';
+            firstPoints = points;
+        }
+        ret += action + ";";
+    }
+
+    
+    ret += "\nSoft hands strategy:\n";
+    firstPoints = {};
+    ret += ";";
+    for(const auto& rank : BlackjackRank::createAll())
+        ret += rank.toString() + ";";
+    for(const auto& [situation, action] : softStrat)
+    {
+        const auto& [points, dealerRank] = situation;
+        if(points != firstPoints)
+        {
+            ret += "\n" + points.toString() + ';';
+            firstPoints = points;
+        }
+        ret += action + ";";
+    }
+
+    ret += "\nSplitting Strategy:\n";
+    BlackjackRank firstRank = {};
+    ret += ";";
+    for(const auto& rank : BlackjackRank::createAll())
+        ret += rank.toString() + ";";
+    for(const auto& [situation, percentage] : splitPercentages)
+    {
+        const auto& [handRank, dealerRank] = situation;
+        if(handRank != firstRank)
+        {
+            ret += "\n" + handRank.toString() + ';';
+            firstRank = handRank;
+        }
+        ret += (percentage == Percentage(100) ? std::string("P") : std::string("-")) + ";";
+    }
+    return ret;
+}
+
 
 BlackjackStrategy BlackjackStrategy::createTest(Percentage const& draw, Percentage const& doubleDown, Percentage const& split)
 {

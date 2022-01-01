@@ -18,6 +18,8 @@ public:
     void mutate();
     std::string toString() const;
     bool doIt(int threshold) const;
+    friend constexpr auto operator<=>(Percentage const& l, Percentage const& r) = default;
+   
 private:
     double perc_ = 0.5;
 };
@@ -71,6 +73,7 @@ struct BlackjackStrategy {
 
     std::string toString() const;
     std::string toStringMat() const;
+    std::string toStringMat2() const;
     static BlackjackStrategy createTest(Percentage const& draw, Percentage const& doubleDown, Percentage const& split);
 };
 

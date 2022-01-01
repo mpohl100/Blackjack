@@ -26,7 +26,7 @@ double BlackjackChallenge::score(Percentage const& perc) const
     double result = 0;
     InfiniteDeck deck;
     evol::Rng rng;
-    for(size_t i = 0; i < 1000; ++i)
+    for(size_t i = 0; i < 10000; ++i)
     {
         DealerHand dealerHand;
         dealerHand.addCard(dealerRank_.getRepresentativeCard());

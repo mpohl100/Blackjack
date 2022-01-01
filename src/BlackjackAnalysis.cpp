@@ -133,6 +133,8 @@ BlackjackStrategy optimizeBlackjack()
             SplitSituation splitSituation;
             splitSituation.situation = splitRank;
             splitSituation.dealerCard = dealerRank;
+            if(splitRank == BlackjackRank(Ten) and dealerRank == BlackjackRank(Deuce))
+                std::cout << "found my situation\n";
             situation.splitSituation = std::make_optional<SplitSituation>(splitSituation);
             result.splitPercentages[splitSituation] = optimizeSitutation(situation);
         }

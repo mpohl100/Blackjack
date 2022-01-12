@@ -17,6 +17,6 @@ struct BlackjackGameSituation{
 
 Percentage optimizeSitutation(BlackjackGameSituation const& situation);
 
-BlackjackStrategy optimizeBlackjack();
+BlackjackStrategy optimizeBlackjack(int cardCount = 0);
 
 }

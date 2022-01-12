@@ -3,6 +3,9 @@
 #include "BlackjackStrategy.h"
 #include "Hand.h"
 #include "Util.h"
+#include "Deck52.h"
+
+#include <memory>
 
 namespace blackjack{
 
@@ -16,10 +19,8 @@ public:
     BlackjackChallenge(
         Type type,
         BlackjackRank dealerCard, PlayerHand const& playerHand,
-        BlackjackStrategy const& strat);
+        BlackjackStrategy const& strat, std::unique_ptr<Deck>  deck);
     BlackjackChallenge() = default;
-    BlackjackChallenge(BlackjackChallenge const&) = default;
-    BlackjackChallenge& operator=(BlackjackChallenge const&) = default;
     BlackjackChallenge(BlackjackChallenge&&) = default;
     BlackjackChallenge& operator=(BlackjackChallenge&&) = default;
 
@@ -31,6 +32,7 @@ private:
     BlackjackRank dealerRank_;
     PlayerHand playerHand_;
     mutable BlackjackStrategy strat_;
+    std::unique_ptr<Deck> deck_;
 };
 
 }

@@ -5,6 +5,7 @@
 
 #include <stdexcept>
 #include <iostream>
+#include <memory>
 
 namespace blackjack{
 
@@ -61,13 +62,14 @@ PlayerHand getPlayerHand(BlackjackChallenge::Type type, BlackjackGameSituation c
     return ret;
 }
 
-Percentage optimizeSitutation(BlackjackGameSituation const& situation)
+Percentage optimizeSitutation(BlackjackGameSituation const& situation, CountedDeck deck)
 {
 
     BlackjackChallenge::Type type = situation.splitSituation 
         ? BlackjackChallenge::Type::Split : situation.isDraw 
         ? BlackjackChallenge::Type::Draw : BlackjackChallenge::Type::DoubleDown;
-    BlackjackChallenge challenge(type, getDealerRank(type, situation), getPlayerHand(type, situation), situation.strat );
+    BlackjackChallenge challenge(type, getDealerRank(type, situation), getPlayerHand(type, situation), 
+        situation.strat, std::make_unique<CountedDeck>(deck) );
     // use absolute answers as a first test wether the expected results are met
     Percentage dont = Percentage(0);
     Percentage doIt = Percentage(100);
@@ -76,9 +78,10 @@ Percentage optimizeSitutation(BlackjackGameSituation const& situation)
     return scoreDoIt > scoreDont ? doIt : dont;
 }
 
-BlackjackStrategy optimizeBlackjack()
+BlackjackStrategy optimizeBlackjack(int cardCount)
 {
     BlackjackStrategy result;
+    CountedDeck deck(cardCount);
     // first optimize drawing
     for(size_t i = 21; i >= 2; i--)
     {
@@ -92,12 +95,12 @@ BlackjackStrategy optimizeBlackjack()
             handSituation.situation = Points(i, i);
             handSituation.dealerCard = dealerRank;
             situation.handSituation = std::make_optional<HandSituation>(handSituation);
-            result.drawingPercentages[handSituation] = optimizeSitutation(situation);
+            result.drawingPercentages[handSituation] = optimizeSitutation(situation, deck);
             HandSituation handSituationUpper;
             handSituationUpper.situation = Points(i, i+10);
             handSituationUpper.dealerCard = dealerRank;
             situation.handSituation = std::make_optional<HandSituation>(handSituationUpper);
-            result.drawingPercentages[handSituationUpper] = optimizeSitutation(situation);
+            result.drawingPercentages[handSituationUpper] = optimizeSitutation(situation, deck);
         }
     }
     // then optimize double down
@@ -113,12 +116,12 @@ BlackjackStrategy optimizeBlackjack()
             handSituation.situation = Points(i, i);
             handSituation.dealerCard = dealerRank;
             situation.handSituation = std::make_optional<HandSituation>(handSituation);
-            result.doubleDownPercentages[handSituation] = optimizeSitutation(situation);
+            result.doubleDownPercentages[handSituation] = optimizeSitutation(situation, deck);
             HandSituation handSituationUpper;
             handSituationUpper.situation = Points(i, i+10);
             handSituationUpper.dealerCard = dealerRank;
             situation.handSituation = std::make_optional<HandSituation>(handSituationUpper);
-            result.doubleDownPercentages[handSituationUpper] = optimizeSitutation(situation);
+            result.doubleDownPercentages[handSituationUpper] = optimizeSitutation(situation, deck);
         }
     }
     // then optimize split
@@ -133,10 +136,8 @@ BlackjackStrategy optimizeBlackjack()
             SplitSituation splitSituation;
             splitSituation.situation = splitRank;
             splitSituation.dealerCard = dealerRank;
-            if(splitRank == BlackjackRank(Ten) and dealerRank == BlackjackRank(Deuce))
-                std::cout << "found my situation\n";
             situation.splitSituation = std::make_optional<SplitSituation>(splitSituation);
-            result.splitPercentages[splitSituation] = optimizeSitutation(situation);
+            result.splitPercentages[splitSituation] = optimizeSitutation(situation, deck);
         }
     }
     return result;

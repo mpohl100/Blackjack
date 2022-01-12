@@ -7,11 +7,12 @@ namespace blackjack{
 
 BlackjackChallenge::BlackjackChallenge( Type type,
     BlackjackRank dealerCard, PlayerHand const& playerHand,
-    BlackjackStrategy const& strat)
+    BlackjackStrategy const& strat, std::unique_ptr<Deck> deck)
 : type_(type)
 , dealerRank_(dealerCard)
 , playerHand_(playerHand)
 , strat_(strat)
+, deck_(std::move(deck))
 {}
 
 double BlackjackChallenge::score(Percentage const& perc) const
@@ -24,14 +25,13 @@ double BlackjackChallenge::score(Percentage const& perc) const
     else if(type_ == Type::Split)
         strat_.splitPercentages[{BlackjackRank(playerHand_.cards[0].rank()), dealerRank_}] = perc;
     double result = 0;
-    InfiniteDeck deck;
     evol::Rng rng;
-    for(size_t i = 0; i < 10000; ++i)
+    for(size_t i = 0; i < 2000; ++i)
     {
         DealerHand dealerHand;
         dealerHand.addCard(dealerRank_.getRepresentativeCard());
-        dealerHand.addCard(deck.dealCard(rng));
-        result += playBlackjackHand(1.0, playerHand_, dealerHand, deck, strat_, rng, getPlayMode());
+        dealerHand.addCard(deck_->dealCard(rng));
+        result += playBlackjackHand(1.0, playerHand_, dealerHand, *deck_, strat_, rng, getPlayMode());
     }
     return result;
 }

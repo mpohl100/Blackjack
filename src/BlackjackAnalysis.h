@@ -15,7 +15,7 @@ struct BlackjackGameSituation{
     int logLevel = 1;
 };    
 
-Percentage optimizeSitutation(BlackjackGameSituation const& situation);
+bool optimizeSitutation(BlackjackGameSituation const& situation);
 
 BlackjackStrategy optimizeBlackjack(int cardCount = 0);
 

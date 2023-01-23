@@ -25,7 +25,7 @@ double playHand(std::string const& str, PlayMode playMode)
     DealerHand dealerHand{cards};    
     cards = deck.deal(2, rng);
     PlayerHand playerHand{cards};
-    BlackjackStrategy strat = BlackjackStrategy::createTest(Percentage(100), Percentage(0), Percentage(0));
+    BlackjackStrategy strat = BlackjackStrategy::createTest(true, false, false);
     return playBlackjackHand(1, playerHand, dealerHand, deck, strat, rng, playMode);
 }
 

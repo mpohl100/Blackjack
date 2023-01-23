@@ -24,7 +24,7 @@ public:
     BlackjackChallenge(BlackjackChallenge&&) = default;
     BlackjackChallenge& operator=(BlackjackChallenge&&) = default;
 
-    double score(Percentage const& perc) const;
+    double score(bool doIt) const;
 private:
     PlayMode getPlayMode() const;
 

@@ -62,7 +62,7 @@ PlayerHand getPlayerHand(BlackjackChallenge::Type type, BlackjackGameSituation c
     return ret;
 }
 
-Percentage optimizeSitutation(BlackjackGameSituation const& situation, CountedDeck deck)
+bool optimizeSitutation(BlackjackGameSituation const& situation, CountedDeck deck)
 {
 
     BlackjackChallenge::Type type = situation.splitSituation 
@@ -71,8 +71,8 @@ Percentage optimizeSitutation(BlackjackGameSituation const& situation, CountedDe
     BlackjackChallenge challenge(type, getDealerRank(type, situation), getPlayerHand(type, situation), 
         situation.strat, std::make_unique<CountedDeck>(deck) );
     // use absolute answers as a first test wether the expected results are met
-    Percentage dont = Percentage(0);
-    Percentage doIt = Percentage(100);
+    bool dont = false;
+    bool doIt = true;
     double scoreDont = challenge.score(dont);
     double scoreDoIt = challenge.score(doIt);
     return scoreDoIt > scoreDont ? doIt : dont;

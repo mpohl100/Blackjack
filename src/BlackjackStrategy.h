@@ -6,24 +6,6 @@
 
 namespace blackjack{
 
-class Percentage{
-public:
-    Percentage(int val);
-    Percentage() = default;
-    Percentage(Percentage const&) = default;
-    Percentage& operator=(Percentage const&) = default;
-    Percentage(Percentage&&) = default;
-    Percentage& operator=(Percentage&&) = default;
-    void crossover(Percentage const& other);
-    void mutate();
-    std::string toString() const;
-    bool doIt(int threshold) const;
-    friend constexpr auto operator<=>(Percentage const& l, Percentage const& r) = default;
-   
-private:
-    double perc_ = 0.5;
-};
-
 template<class T>
 struct BlackjackSituation{
     T situation;
@@ -62,19 +44,17 @@ struct BlackjackStrategy {
     // 19 points and all dealer open cards
     // ...
     // after all aces are solved we can then solve for all non ace hands
-    std::map<HandSituation, Percentage> drawingPercentages;
+    std::map<HandSituation, bool> drawingPercentages;
 
     // we can solve the double down percentages independently of the drawing percentages
-    std::map<HandSituation, Percentage> doubleDownPercentages;
+    std::map<HandSituation, bool> doubleDownPercentages;
 
     // the split percentages can be solved after the first two percentages 
     // as it can be played optimally from there on
-    std::map<SplitSituation, Percentage> splitPercentages;
+    std::map<SplitSituation, bool> splitPercentages;
 
-    std::string toString() const;
-    std::string toStringMat() const;
     std::string toStringMat2() const;
-    static BlackjackStrategy createTest(Percentage const& draw, Percentage const& doubleDown, Percentage const& split);
+    static BlackjackStrategy createTest(bool draw, bool doubleDown, bool split);
 };
 
 }

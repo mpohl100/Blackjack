@@ -15,15 +15,15 @@ BlackjackChallenge::BlackjackChallenge( Type type,
 , deck_(std::move(deck))
 {}
 
-double BlackjackChallenge::score(Percentage const& perc) const
+double BlackjackChallenge::score(bool doIt) const
 {
     auto points = evaluateBlackjackHand(playerHand_);
     if(type_ == Type::Draw)
-        strat_.drawingPercentages[{points, dealerRank_}] = perc;
+        strat_.drawingPercentages[{points, dealerRank_}] = doIt;
     else if(type_ == Type::DoubleDown)
-        strat_.doubleDownPercentages[{points, dealerRank_}] = perc;
+        strat_.doubleDownPercentages[{points, dealerRank_}] = doIt;
     else if(type_ == Type::Split)
-        strat_.splitPercentages[{BlackjackRank(playerHand_.cards[0].rank()), dealerRank_}] = perc;
+        strat_.splitPercentages[{BlackjackRank(playerHand_.cards[0].rank()), dealerRank_}] = doIt;
     double result = 0;
     evol::Rng rng;
     for(size_t i = 0; i < 2000; ++i)

@@ -38,7 +38,7 @@ double playBlackjackHand(
         auto it = playerStrategy.splitPercentages.find({rank, dealerHand.openCard()});
         if(it == playerStrategy.splitPercentages.end())
             throw std::runtime_error("Split strategy not found for rank " + rank.toString() + " ; " + dealerHand.openCard().toString());
-        bool doSplit = it->second.doIt(rng.fetchUniform(0, 100, 1).top());
+        bool doSplit = it->second;
         if(doSplit)
         {
             PlayerHand first;
@@ -64,8 +64,7 @@ double playBlackjackHand(
         {
             throw std::runtime_error("Double down strategy not found " + playerPoints.toString() + " ; " + dealerHand.openCard().toString());
         }
-        int randomNumber = rng.fetchUniform(0, 100, 1).top(); 
-        onlyDrawOnce = it->second.doIt(randomNumber);   
+        onlyDrawOnce = it->second;   
         if(onlyDrawOnce)
             playerBet *= 2.0;
     }
@@ -83,9 +82,8 @@ double playBlackjackHand(
         auto it = playerStrategy.drawingPercentages.find({playerPoints, dealerHand.openCard()});
         if(it == playerStrategy.drawingPercentages.end())
             throw std::runtime_error("Drawing strategy not found " + playerPoints.toString() + " ; " + dealerHand.openCard().toString());
-        const Percentage& percentage = it->second;
-        int randomNumber = rng.fetchUniform(0, 100, 1).top(); 
-        if( not percentage.doIt(randomNumber))
+        bool doIt = it->second;
+        if( not doIt)
             break;
         playerHand.addCard(deck.dealCard(rng));
     }

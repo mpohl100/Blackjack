@@ -1,44 +1,12 @@
 #pragma once
 
+#include "BlackjackConcepts.h"
 #include "BlackjackPoints.h"
 #include "BlackjackSituation.h"
-#include "Card52.h"
+#include "Deck52.h"
 #include <map>
 
 namespace blackjack{
-
-template<class T>
-struct BlackjackSituation{
-    T situation;
-    BlackjackRank dealerCard;
-    
-    BlackjackSituation(T const& sit, BlackjackRank dealerCard)
-    : situation(sit)
-    , dealerCard(dealerCard)
-    {}
-
-    BlackjackSituation() = default;
-    BlackjackSituation(BlackjackSituation const&) = default;
-    BlackjackSituation& operator=(BlackjackSituation const&) = default;
-    BlackjackSituation(BlackjackSituation&&) = default;
-    BlackjackSituation& operator=(BlackjackSituation&&) = default;
-
-    friend constexpr auto operator<=>(BlackjackSituation const& l, BlackjackSituation const& r) = default;
-    static std::vector<BlackjackSituation> createAll()
-    {
-        auto allSits = T::createAll();
-        auto dealerCards = BlackjackRank::createAll();
-        std::vector<BlackjackSituation> ret;
-        for(const auto& sit : allSits)
-            for(const auto& dealerCard : dealerCards)
-                ret.push_back({sit, dealerCard});
-        return ret;
-    }
-};
-
-using HandSituation = BlackjackSituation<Points>;
-using SplitSituation = BlackjackSituation<BlackjackRank>;
-
 struct BlackjackStrategy {
     // for the drawingPercentages first all cases for one ace ist contained must be solved for
     // 20 points and all dealer open cards
@@ -57,6 +25,8 @@ struct BlackjackStrategy {
     std::string toStringMat2() const;
     static BlackjackStrategy createTest(bool draw, bool doubleDown, bool split);
 };
+
+static_assert(BlackjackStrategyConcept<BlackjackStrategy, Deck>);
 
 }
 

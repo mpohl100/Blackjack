@@ -2,7 +2,6 @@
 
 #include "BlackjackSituation.h"
 #include "Card52.h"
-#include "Deck.h"
 
 #include <concepts>
 
@@ -16,10 +15,10 @@ concept DeckConcept = std::semiregular<T> && requires(const T t)
 }
 && requires(T t, const evol::Rng& rng){
     {t.getCard(rng)} -> std::same_as<Card52>;
-}
+};
 
-template<class T, class Deck>
-concept BlackjackStrategyConcept = std::semiregular<T> && DeckConcept<Deck> && requires (const T t, HandSituation handSituation, SplitSituation splitSituation, Deck deck)
+template<class T, class D>
+concept BlackjackStrategyConcept = std::semiregular<T> && DeckConcept<D> && requires (const T t, HandSituation handSituation, SplitSituation splitSituation, D deck)
 {
     {t.getDraw(handSituation, deck)} -> std::same_as<bool>;
     {t.getDoubleDown(handSituation, deck)} -> std::same_as<bool>;
@@ -31,5 +30,5 @@ concept BlackjackStrategyConcept = std::semiregular<T> && DeckConcept<Deck> && r
     {t.addDoubleDown(handSituation, doIt)};
     {t.addSplit(splitSituation, doIt)};
 
-}
+};
 }

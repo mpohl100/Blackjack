@@ -30,6 +30,11 @@ struct BlackjackSituation{
                 ret.push_back({sit, dealerCard});
         return ret;
     }
+
+    std::string toString() const 
+    {
+        return situation.toString() + " / " + dealerCard.toString();
+    }
 };
 
 using HandSituation = BlackjackSituation<Points>;

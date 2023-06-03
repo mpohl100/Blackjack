@@ -28,5 +28,46 @@ struct BlackjackStrategy {
 
 static_assert(BlackjackStrategyConcept<BlackjackStrategy, Deck>);
 
+class BlackjackStrategyMap{
+public:
+    template<DeckConcept Deck>  
+    bool getDraw(const HandSituation& handSituation, const Deck& deck)
+    {
+        const auto it = _drawingPercentages.find(handSituation);
+        if(it == _drawingPercentages.cend()){
+            throw std::runtime_error("Did not find hand situation " + handSituation.toString() + " in BlackjackStrategyMap::getDraw");
+        }
+        return it->second;
+    };
+
+    template<DeckConcept Deck>  
+    bool getDoubleDown(const HandSituation& handSituation, const Deck& deck)
+    {
+        const auto it = _doubleDownPercentages.find(handSituation);
+        if(it == _doubleDownPercentages.cend()){
+            throw std::runtime_error("Did not find hand situation " + handSituation.toString() + " in BlackjackStrategyMap::getDoubleDown");
+        }
+        return it->second;
+    }
+
+    template<DeckConcept Deck>  
+    bool getSplit(const SplitSituation& splitSituation, const Deck& deck)
+    {
+        const auto it = _splitPercentages.find(splitSituation);
+        if(it == _splitPercentages.cend()){
+            throw std::runtime_error("Did not find hand situation " + splitSituation.toString() + " in BlackjackStrategyMap::getSplit");
+        }
+        return it->second;
+    };
+
+    void addDraw(HandSituation handSituation, bool doIt);
+    void addDoubleDown(HandSituation handSituation, bool doIt);
+    void addSplit(SplitSituation splitSituation, bool doIt)};
+private:
+    std::map<HandSituation, bool> _drawingPercentages;
+    std::map<HandSituation, bool> _doubleDownPercentages;
+    std::map<SplitSituation, bool> _splitPercentages;
+};
+
 }
 

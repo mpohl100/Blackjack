@@ -76,4 +76,23 @@ int CountedDeck::count() const
     return count_;
 }
 
+namespace conceptify{
+
+int CountedDeck::getCount() const
+{
+    return count_;
+}
+
+int CountedDeck::getNumberCards() const
+{
+    return static_cast<int>(_cards.size());
+}
+
+Card52 CountedDeck::getCard(const evol::Rng& rng)
+{
+    int randomNumber = rng.fetchUniform(0, int(deck_.size())-1, 1).top();
+    return deck_[randomNumber];
+}
+
+}
 }

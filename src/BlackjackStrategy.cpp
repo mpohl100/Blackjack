@@ -88,4 +88,25 @@ BlackjackStrategy BlackjackStrategy::createTest(bool draw, bool doubleDown, bool
     return ret;
 }
 
+namespace conceptify{
+
+void BlackjackStrategyMap::addDraw(HandSituation handSituation, bool doIt)
+{
+    _draw[handSituation] = doIt;
+}
+
+void BlackjackStrategyMap::addDoubleDown(HandSituation handSituation, bool doIt)
+{
+    _doubleDown[handSituation] = doIt;
+}
+
+void BlackjackStrategyMap::addSplit(SplitSituation splitSituation, bool doIt)
+{
+    _split[splitSituation] = doIt;
+}
+
+//static_assert(BlackjackStrategyConcept<BlackjackStrategyMap>);
+
+}
+
 }

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "BlackjackAnalysis.h"
 #include "Card52.h"
 #include "evol/Rng.h"
 
@@ -45,8 +44,6 @@ public:
     CountedDeck& operator=(const CountedDeck&) = default;
     CountedDeck(CountedDeck&&) = default;
     CountedDeck& operator=(CountedDeck&&) = default;
-    Card52 dealCard(evol::Rng const& rng) override;
-    int count() const;
 
     int getCount() const;
     int getNumberCards() const;

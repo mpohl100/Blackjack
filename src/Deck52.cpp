@@ -80,18 +80,18 @@ namespace conceptify{
 
 int CountedDeck::getCount() const
 {
-    return count_;
+    return _count;
 }
 
 int CountedDeck::getNumberCards() const
 {
-    return static_cast<int>(_cards.size());
+    return static_cast<int>(_deck.size());
 }
 
 Card52 CountedDeck::getCard(const evol::Rng& rng)
 {
-    int randomNumber = rng.fetchUniform(0, int(deck_.size())-1, 1).top();
-    return deck_[randomNumber];
+    int randomNumber = rng.fetchUniform(0, int(_deck.size())-1, 1).top();
+    return _deck[randomNumber];
 }
 
 }

@@ -124,11 +124,12 @@ double deducePlayerResult(double playerResult, double playerBet, const PlayerHan
     return -playerBet;
 }
 
-template<BlackjackStrategyConcept BlackjackStrat, DeckConcept Deck>
+template<class BlackjackStrategyType, DeckConcept Deck>
+requires BlackjackStrategyConcept<BlackjackStrategyType, Deck>
 // returns the payout
 double playBlackjackHand(
     double playerBet, PlayerHand playerHand, DealerHand dealerHand, 
-    Deck& deck, const BlackjackStrat& playerStrategy, 
+    Deck& deck, const BlackjackStrategyType& playerStrategy, 
     evol::Rng const& rng, PlayMode playMode)
 {
     // play dealer hand at the beginning so that recursive versions for splitting use the same dealer outcome

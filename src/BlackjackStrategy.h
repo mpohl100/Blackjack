@@ -4,7 +4,9 @@
 #include "BlackjackPoints.h"
 #include "BlackjackSituation.h"
 #include "Deck52.h"
+
 #include <map>
+#include <stdexcept>
 
 namespace blackjack{
 struct BlackjackStrategy {
@@ -26,35 +28,36 @@ struct BlackjackStrategy {
     static BlackjackStrategy createTest(bool draw, bool doubleDown, bool split);
 };
 
-static_assert(BlackjackStrategyConcept<BlackjackStrategy, Deck>);
+
+namespace conceptify{
 
 class BlackjackStrategyMap{
 public:
     template<DeckConcept Deck>  
-    bool getDraw(const HandSituation& handSituation, const Deck& deck)
+    bool getDraw(const HandSituation& handSituation, [[maybe_unused]] const Deck& deck)
     {
-        const auto it = _drawingPercentages.find(handSituation);
-        if(it == _drawingPercentages.cend()){
+        const auto it = _draw.find(handSituation);
+        if(it == _draw.cend()){
             throw std::runtime_error("Did not find hand situation " + handSituation.toString() + " in BlackjackStrategyMap::getDraw");
         }
         return it->second;
     };
 
     template<DeckConcept Deck>  
-    bool getDoubleDown(const HandSituation& handSituation, const Deck& deck)
+    bool getDoubleDown(const HandSituation& handSituation, [[maybe_unused]] const Deck& deck)
     {
-        const auto it = _doubleDownPercentages.find(handSituation);
-        if(it == _doubleDownPercentages.cend()){
+        const auto it = _doubleDown.find(handSituation);
+        if(it == _doubleDown.cend()){
             throw std::runtime_error("Did not find hand situation " + handSituation.toString() + " in BlackjackStrategyMap::getDoubleDown");
         }
         return it->second;
-    }
+    };
 
     template<DeckConcept Deck>  
-    bool getSplit(const SplitSituation& splitSituation, const Deck& deck)
+    bool getSplit(const SplitSituation& splitSituation, [[maybe_unused]] const Deck& deck)
     {
-        const auto it = _splitPercentages.find(splitSituation);
-        if(it == _splitPercentages.cend()){
+        const auto it = _split.find(splitSituation);
+        if(it == _split.cend()){
             throw std::runtime_error("Did not find hand situation " + splitSituation.toString() + " in BlackjackStrategyMap::getSplit");
         }
         return it->second;
@@ -62,12 +65,12 @@ public:
 
     void addDraw(HandSituation handSituation, bool doIt);
     void addDoubleDown(HandSituation handSituation, bool doIt);
-    void addSplit(SplitSituation splitSituation, bool doIt)};
+    void addSplit(SplitSituation splitSituation, bool doIt);
 private:
-    std::map<HandSituation, bool> _drawingPercentages;
-    std::map<HandSituation, bool> _doubleDownPercentages;
-    std::map<SplitSituation, bool> _splitPercentages;
+    std::map<HandSituation, bool> _draw;
+    std::map<HandSituation, bool> _doubleDown;
+    std::map<SplitSituation, bool> _split;
 };
-
+}
 }
 

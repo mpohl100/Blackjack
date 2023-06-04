@@ -1,3 +1,5 @@
+#pragma once
+
 #include "BlackjackPoints.h"
 #include "Card52.h"
 

@@ -3,7 +3,10 @@
 #include "BlackjackSituation.h"
 #include "Card52.h"
 
+#include "evol/Rng.h"
+
 #include <concepts>
+
 
 namespace blackjack{
 

@@ -71,6 +71,68 @@ private:
     std::map<HandSituation, bool> _doubleDown;
     std::map<SplitSituation, bool> _split;
 };
+
+template<DeckConcept Deck>
+int getClampedCount(const Deck& deck, int minCount, int maxCount)
+{
+    int nbCards = deck.getNbCards();
+    int deckCount = deck.getCount();
+    double ratio = static_cast<double>(deckCount) / nbCards;
+    int count = static_cast<int>(ratio * 52.0);
+    if(count > maxCount) {
+        return maxCount;
+    }
+    else if(count < minCount) {
+        return minCount;
+    } else {
+        return count;
+    }
+}
+
+template<class BlackjackStrategyType, DeckConcept Deck>
+requires BlackjackStrategyConcept<BlackjackStrategyType, Deck>
+class CountedBlackjackStrategy{
+public:
+    bool getDraw(const HandSituation& handSituation, const Deck& deck) const
+    {
+        int count = getClampedCount(deck, _strats.begin()->first, _strats.rbegin()->first);
+        const auto it = _strats.find(count);
+        if(it == _strats.cend()){
+            throw std::runtime_error("Strategy with count " + std::to_string(count) + " not found in CountedBlackjackStrategy");
+        }
+        return it->second.getDraw(handSituation, deck);
+    };
+
+    bool getDoubleDown(const HandSituation& handSituation, const Deck& deck) const
+    {
+        int count = getClampedCount(deck, _strats.begin()->first, _strats.rbegin()->first);
+        const auto it = _strats.find(count);
+        if(it == _strats.cend()){
+            throw std::runtime_error("Strategy with count " + std::to_string(count) + " not found in CountedBlackjackStrategy");
+        }
+        return it->second.getDoubleDown(handSituation, deck);
+    };
+ 
+    bool getSplit(const SplitSituation& splitSituation, const Deck& deck) const
+    {
+        int count = getClampedCount(deck, _strats.begin()->first, _strats.rbegin()->first);
+        const auto it = _strats.find(count);
+        if(it == _strats.cend()){
+            throw std::runtime_error("Strategy with count " + std::to_string(count) + " not found in CountedBlackjackStrategy");
+        }
+        return it->second.getSplit(splitSituation, deck);
+    };
+
+    void addDraw([[maybe_unused]] HandSituation handSituation, [[maybe_unused]] bool doIt){};
+    void addDoubleDown([[maybe_unused]] HandSituation handSituation, [[maybe_unused]] bool doIt){};
+    void addSplit([[maybe_unused]] SplitSituation splitSituation, [[maybe_unused]] bool doIt){};
+    void addBlackjackStrategy(int count, const BlackjackStrategyType& strat)
+    {
+        _strats[count] = strat;
+    }
+private:
+    std::map<int, BlackjackStrategyType> _strats;
+};
 }
 }
 

@@ -23,7 +23,7 @@ concept DeckConcept = std::semiregular<T> && requires(const T t)
 template<class T, class D>
 concept BlackjackStrategyConcept = std::semiregular<T> && DeckConcept<D> && requires (const T t, const HandSituation& handSituation, const SplitSituation& splitSituation, const D& deck)
 {
-    {t.template getDraw<D>(handSituation, deck)} -> std::same_as<bool>;
+    {t.getDraw(handSituation, deck)} -> std::same_as<bool>;
     {t.getDoubleDown(handSituation, deck)} -> std::same_as<bool>;
     {t.getSplit(splitSituation, deck)} -> std::same_as<bool>;
 }

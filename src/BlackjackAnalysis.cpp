@@ -64,7 +64,6 @@ PlayerHand getPlayerHand(BlackjackChallenge::Type type, BlackjackGameSituation c
 
 bool optimizeSitutation(BlackjackGameSituation const& situation, CountedDeck deck)
 {
-
     BlackjackChallenge::Type type = situation.splitSituation 
         ? BlackjackChallenge::Type::Split : situation.isDraw 
         ? BlackjackChallenge::Type::Draw : BlackjackChallenge::Type::DoubleDown;

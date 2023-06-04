@@ -1,5 +1,6 @@
 #pragma once
 
+#include "BlackjackChallenge.h"
 #include "BlackjackConcepts.h"
 #include "BlackjackSituation.h"
 #include "BlackjackStrategy.h"
@@ -29,19 +30,20 @@ struct BlackjackGameSituation{
     std::optional<HandSituation> handSituation;
     bool isDraw = false;
     std::optional<SplitSituation> splitSituation;
-    BlackjackStrategy strat;
+    BlackjackStrategyType strat;
     int nbGenerations = 100;
     int logLevel = 1;
 };    
 
 template<class BlackjackStrategyType, DeckConcept Deck>
 requires BlackjackStrategyConcept<BlackjackStrategyType, Deck>
-bool optimizeSitutation(BlackjackGameSituation<BlackjackStrategyType, Deck> const& situation)
+bool optimizeSitutation(BlackjackGameSituation<BlackjackStrategyType, Deck> const& situation, Deck deck)
 {
-    BlackjackChallenge::Type type = situation.splitSituation 
-    ? BlackjackChallenge::Type::Split : situation.isDraw 
-    ? BlackjackChallenge::Type::Draw : BlackjackChallenge::Type::DoubleDown;
-    BlackjackChallenge<BlackjackStrategyType, Deck> challenge(type, getDealerRank(type, situation), getPlayerHand(type, situation), 
+    using BlackjackChallengeType = BlackjackChallenge<BlackjackStrategyType, Deck>;
+    typename BlackjackChallengeType::Type type = situation.splitSituation 
+    ? BlackjackChallengeType::Type::Split : situation.isDraw 
+    ? BlackjackChallengeType::Type::Draw : BlackjackChallengeType::Type::DoubleDown;
+    BlackjackChallengeType challenge(type, getDealerRank(type, situation), getPlayerHand(type, situation), 
         situation.strat, std::make_unique<Deck>(deck) );
     // use absolute answers as a first test wether the expected results are met
     bool dont = false;
@@ -55,7 +57,7 @@ template<class BlackjackStrategyType>
 requires BlackjackStrategyConcept<BlackjackStrategyType, CountedDeck>
 BlackjackStrategyType optimizeBlackjack(int cardCount)
 {
-    BlackjackStrategyType<CountedDeck> result;
+    BlackjackStrategyType result;
     CountedDeck deck(cardCount);
     // first optimize drawing
     for(size_t i = 21; i >= 2; i--)
@@ -63,7 +65,7 @@ BlackjackStrategyType optimizeBlackjack(int cardCount)
         auto blackjackRanks = BlackjackRank::createAll();
         for(BlackjackRank dealerRank : blackjackRanks)
         {
-            BlackjackGameSituation situation;
+            BlackjackGameSituation<BlackjackStrategyType, CountedDeck> situation;
             situation.isDraw = true;
             situation.strat = result; // all dependent game situations should be in the map
             HandSituation handSituation;
@@ -84,7 +86,7 @@ BlackjackStrategyType optimizeBlackjack(int cardCount)
         auto blackjackRanks = BlackjackRank::createAll();
         for(BlackjackRank dealerRank : blackjackRanks)
         {
-            BlackjackGameSituation situation;
+            BlackjackGameSituation<BlackjackStrategyType, CountedDeck> situation;
             situation.isDraw = false;
             situation.strat = result; // all dependent game situations should be in the map
             HandSituation handSituation;
@@ -105,7 +107,7 @@ BlackjackStrategyType optimizeBlackjack(int cardCount)
     {
         for(BlackjackRank dealerRank : blackjackRanks)
         {
-            BlackjackGameSituation situation;
+            BlackjackGameSituation<BlackjackStrategyType, CountedDeck> situation;
             situation.isDraw = false;
             situation.strat = result; // all dependent game situations should be in the map
             SplitSituation splitSituation;

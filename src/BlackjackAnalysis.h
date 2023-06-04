@@ -4,8 +4,10 @@
 #include "BlackjackConcepts.h"
 #include "BlackjackSituation.h"
 #include "BlackjackStrategy.h"
+#include "Deck52.h"
 
 #include <optional>
+#include <stdexcept>
 
 namespace blackjack{
 
@@ -37,6 +39,63 @@ struct BlackjackGameSituation{
 
 template<class BlackjackStrategyType, DeckConcept Deck>
 requires BlackjackStrategyConcept<BlackjackStrategyType, Deck>
+BlackjackRank getDealerRank(typename BlackjackChallenge<BlackjackStrategyType, Deck>::Type type, BlackjackGameSituation<BlackjackStrategyType, Deck> const& situation)
+{
+    if(type == BlackjackChallenge<BlackjackStrategyType, Deck>::Type::Split)
+        return situation.splitSituation->dealerCard;
+    return situation.handSituation->dealerCard;
+}
+
+template<class BlackjackStrategyType, DeckConcept Deck>
+requires BlackjackStrategyConcept<BlackjackStrategyType, Deck>
+PlayerHand getPlayerHand(typename BlackjackChallenge<BlackjackStrategyType, Deck>::Type type, BlackjackGameSituation<BlackjackStrategyType, Deck> const& situation)
+{
+    PlayerHand ret;
+    if(type == BlackjackChallenge<BlackjackStrategyType, Deck>::Type::Split)
+    {
+        ret.addCard(situation.splitSituation->situation.getRepresentativeCard());
+        ret.addCard(situation.splitSituation->situation.getRepresentativeCard());
+    }
+    else
+    {
+        int goalPoints = situation.handSituation->situation.lower();
+        if(goalPoints != situation.handSituation->situation.upper())
+        {
+            ret.addCard(Card52(Ace, Hearts));
+            goalPoints--;
+        }
+        while(goalPoints > 0)
+        {
+            if(goalPoints >= 10)
+            {
+                ret.addCard(Card52(Eight, Hearts));
+                goalPoints -= 8;
+            }
+            else{
+                switch(goalPoints){
+                    case 1: ret.addCard(Card52(Ace, Spades)); break;
+                    case 2: ret.addCard(Card52(Deuce, Spades)); break;
+                    case 3: ret.addCard(Card52(Three, Spades)); break;
+                    case 4: ret.addCard(Card52(Four, Spades)); break;
+                    case 5: ret.addCard(Card52(Five, Spades)); break;
+                    case 6: ret.addCard(Card52(Six, Spades)); break;
+                    case 7: ret.addCard(Card52(Seven, Spades)); break;
+                    case 8: ret.addCard(Card52(Eight, Spades)); break;
+                    case 9: ret.addCard(Card52(Nine, Spades)); break;
+                    default: throw std::runtime_error("Unexpected goal points in generation of player hand: " + std::to_string(goalPoints));
+                }
+                break;
+            }
+        }
+        Points toCheck = evaluateBlackjackHand(ret);
+        if(toCheck != situation.handSituation->situation)
+            throw std::runtime_error("incorrect player hand formed.");
+    }
+    return ret;
+}
+
+template<class BlackjackStrategyType, DeckConcept Deck>
+requires BlackjackStrategyConcept<BlackjackStrategyType, Deck>
 bool optimizeSitutation(BlackjackGameSituation<BlackjackStrategyType, Deck> const& situation, Deck deck)
 {
     using BlackjackChallengeType = BlackjackChallenge<BlackjackStrategyType, Deck>;
@@ -54,7 +113,7 @@ bool optimizeSitutation(BlackjackGameSituation<BlackjackStrategyType, Deck> cons
 }
 
 template<class BlackjackStrategyType>
-requires BlackjackStrategyConcept<BlackjackStrategyType, CountedDeck>
+requires BlackjackStrategyConcept<BlackjackStrategyType, conceptify::CountedDeck>
 BlackjackStrategyType optimizeBlackjack(int cardCount)
 {
     BlackjackStrategyType result;

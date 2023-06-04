@@ -1,6 +1,8 @@
 
 #include "BlackjackAnalysis.h"
 #include "BlackjackStrategy.h"
+#include "Play.h"
+#include "Deck52.h"
 
 #include <clara.hpp>
 
@@ -13,9 +15,9 @@ int main(int argc, char** argv)
     using namespace clara;
 
 
-    std::string name;
     bool help = false;
-    auto cli = Opt(name, "name")["-n"]["--name"]("name to greet") | Help(help);
+    int N = 1000000;
+    auto cli = Opt(N, "number_hands")["-n"]["--number-hands"]("the number of hands to play after deducing the strategy") | Help(help);
      
 
     auto result = cli.parse(Args(argc, argv));
@@ -28,9 +30,11 @@ int main(int argc, char** argv)
         exit(0);
     }
 
-    auto strat = optimizeBlackjack<BlackjackStrategyMap>(0);
-    std::cout << "Card count " << i << '\n';
-    //std::cout << strat.toStringMat2() << "\n\n"; 
+    auto strat = blackjack::conceptify::optimizeBlackjack<blackjack::conceptify::BlackjackStrategyMap>(0);
+    //std::cout << strat.toStringMat2() << "\n\n";
+    auto deck = blackjack::conceptify::CountedDeck{0};
+    double playResult = blackjack::conceptify::playBlackjack(N, strat, deck); 
+    std::cout << "Result " << playResult << " after " << N << " hands played.\n";
     return 0;
 }
 

@@ -125,15 +125,15 @@ double playBlackjackHand(
     if(playMode == PlayMode::All and playerHand.isPair()) // splitting hands is allowed
     {
         BlackjackRank rank = BlackjackRank(playerHand.cards[0].rank());
-        bool doSplit = playerStrategy.getSplit({rank, dealerHand.openCard()});
+        bool doSplit = playerStrategy.getSplit({rank, dealerHand.openCard()}, deck);
         if(doSplit)
         {
             PlayerHand first;
             first.addCard(playerHand.cards[0]);
-            first.addCard(deck.dealCard(rng));
+            first.addCard(deck.getCard(rng));
             PlayerHand second;
             second.addCard(playerHand.cards[1]);
-            second.addCard(deck.dealCard(rng));
+            second.addCard(deck.getCard(rng));
             double overallResult = 0;
             overallResult += playBlackjackHand(playerBet, first, dealerHand, deck, playerStrategy, rng, playMode);
             overallResult += playBlackjackHand(playerBet, second, dealerHand, deck, playerStrategy, rng, playMode);
@@ -146,7 +146,7 @@ double playBlackjackHand(
     if(playMode == PlayMode::All or playMode == PlayMode::DoubleDown)
     {
         playerPoints = evaluateBlackjackHand(playerHand);
-        onlyDrawOnce = playerStrategy.getDoubleDown({playerPoints, dealerHand.openCard()});   
+        onlyDrawOnce = playerStrategy.getDoubleDown({playerPoints, dealerHand.openCard()}, deck);   
         if(onlyDrawOnce)
             playerBet *= 2.0;
     }
@@ -154,17 +154,17 @@ double playBlackjackHand(
     {
         if(onlyDrawOnce)
         {
-            playerHand.addCard(deck.dealCard(rng));
+            playerHand.addCard(deck.getCard(rng));
             playerPoints = evaluateBlackjackHand(playerHand);
             break;
         }
         playerPoints = evaluateBlackjackHand(playerHand);
         if(playerPoints.lower() > 21)
             break;
-        bool doIt = playerStrategy.getDraw({playerPoints, dealerHand.openCard()});
+        bool doIt = playerStrategy.getDraw({playerPoints, dealerHand.openCard()}, deck);
         if( not doIt)
             break;
-        playerHand.addCard(deck.dealCard(rng));
+        playerHand.addCard(deck.getCard(rng));
     }
     int playerResult = playerPoints.upper();
     return deducePlayerResult(playerResult, playerBet, playerHand, dealerResult);

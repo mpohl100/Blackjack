@@ -78,6 +78,41 @@ int CountedDeck::count() const
 
 namespace conceptify{
 
+CountedDeck::CountedDeck(int count)
+: _count(count)
+, _deck()
+{
+    for(size_t i = 0; i < 52; ++i)
+        _deck.emplace_back(i);
+    if(_count > 0)
+    {
+        int cnt = _count;
+        std::erase_if(_deck,
+        [&cnt](const Card52& card) mutable {
+            if(cnt > 0 and BlackjackRank(card.rank()) == BlackjackRank(Ten))
+            {
+                cnt--;
+                return true;
+            }
+            return false;        
+        });
+    }
+    else if(_count < 0)
+    {
+        int cnt = -_count;
+        std::erase_if(_deck,
+        [&cnt](const Card52& card) mutable {
+            auto blackjackRank = BlackjackRank(card.rank());
+            if(cnt > 0 and blackjackRank >= BlackjackRank(Deuce) and blackjackRank <= BlackjackRank(Six))
+            {
+                cnt--;
+                return true;
+            }
+            return false;        
+        });
+    }
+}
+
 int CountedDeck::getCount() const
 {
     return _count;

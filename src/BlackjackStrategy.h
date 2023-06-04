@@ -34,7 +34,7 @@ namespace conceptify{
 class BlackjackStrategyMap{
 public:
     template<DeckConcept Deck>  
-    bool getDraw(const HandSituation& handSituation, [[maybe_unused]] const Deck& deck)
+    bool getDraw(const HandSituation& handSituation, [[maybe_unused]] const Deck& deck) const
     {
         const auto it = _draw.find(handSituation);
         if(it == _draw.cend()){
@@ -44,7 +44,7 @@ public:
     };
 
     template<DeckConcept Deck>  
-    bool getDoubleDown(const HandSituation& handSituation, [[maybe_unused]] const Deck& deck)
+    bool getDoubleDown(const HandSituation& handSituation, [[maybe_unused]] const Deck& deck) const
     {
         const auto it = _doubleDown.find(handSituation);
         if(it == _doubleDown.cend()){
@@ -54,7 +54,7 @@ public:
     };
 
     template<DeckConcept Deck>  
-    bool getSplit(const SplitSituation& splitSituation, [[maybe_unused]] const Deck& deck)
+    bool getSplit(const SplitSituation& splitSituation, [[maybe_unused]] const Deck& deck) const
     {
         const auto it = _split.find(splitSituation);
         if(it == _split.cend()){
